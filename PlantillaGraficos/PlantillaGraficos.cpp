@@ -13,17 +13,51 @@
 
 using namespace std;
 
+//declarar una ventana
+GLFWwindow* window;
+
 float posXTriangulo = 0.0f, posYTriangulo = 0.0f;
+
+double tiempoActual, tiempoAnterior;
+double velocidadTriangulo = 0.5;
 
 void teclado_callback(GLFWwindow* window, int key, int sacncode, int action, int mods) {
     if ((action == GLFW_PRESS || action == GLFW_REPEAT) && key == GLFW_KEY_RIGHT) {
         posXTriangulo += 0.01;
     }
-
+    if ((action == GLFW_PRESS || action == GLFW_REPEAT) && key == GLFW_KEY_LEFT) {
+        posXTriangulo += -0.01;
+    }
+    if ((action == GLFW_PRESS || action == GLFW_REPEAT) && key == GLFW_KEY_UP) {
+        posYTriangulo += 0.01;
+    }
+    if ((action == GLFW_PRESS || action == GLFW_REPEAT) && key == GLFW_KEY_DOWN) {
+        posYTriangulo += -0.01;
+    }
 }
 
 void actualizar() {
-    //posXTriangulo += 0.00001;
+    tiempoActual = glfwGetTime();
+    double tiempoDiferencial = tiempoActual - tiempoAnterior;
+
+    int estadoRight = glfwGetKey(window, GLFW_KEY_RIGHT);
+    if (estadoRight == GLFW_PRESS) {
+        posXTriangulo += velocidadTriangulo * tiempoDiferencial;
+    }
+    int estadoUp = glfwGetKey(window, GLFW_KEY_UP);
+    if (estadoUp == GLFW_PRESS) {
+        posYTriangulo += velocidadTriangulo * tiempoDiferencial;
+    }
+    int estadoLeft = glfwGetKey(window, GLFW_KEY_LEFT);
+    if (estadoLeft == GLFW_PRESS) {
+        posXTriangulo += -velocidadTriangulo * tiempoDiferencial;
+    }
+    int estadoDown = glfwGetKey(window, GLFW_KEY_DOWN);
+    if (estadoDown == GLFW_PRESS) {
+        posYTriangulo += -velocidadTriangulo * tiempoDiferencial;
+    }
+
+    tiempoAnterior = tiempoActual;
 }
 
 void dibujar() {
@@ -46,8 +80,7 @@ void dibujar() {
 
 int main()
 {
-    //declarar una ventana
-    GLFWwindow* window;
+   
 
     //si no se pudo iniciar GLFW terminamos ejecucion
     if (!glfwInit()){
@@ -77,7 +110,10 @@ int main()
     cout << "Version OpenGL: " << versionGL;
 
     //establecemos que con cada evento del teclado se llama a la funcion teclado_callback
-    glfwSetKeyCallback(window, teclado_callback);
+    //glfwSetKeyCallback(window, teclado_callback);
+
+    tiempoActual = glfwGetTime();
+    tiempoAnterior = tiempoActual;
 
     //ciclo de dibujo (Draw Loop)
     while (!glfwWindowShouldClose(window)) {
